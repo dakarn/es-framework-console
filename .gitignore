@@ -1,0 +1,6 @@
+.idea
+.git
+composer
+composer.bat
+composer.lock
+composer.phar

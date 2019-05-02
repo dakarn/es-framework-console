@@ -1,0 +1,22 @@
+{
+  "repositories": [
+    {
+      "type": "path",
+      "url":  "C:\\apache\\es-framework-dev\\es-framework-kernel"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "app"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PHPUnit\\": "tests"
+    }
+  },
+  "require": {
+    "php": "7.1.2RC1",
+    "es-framework-kernel": "1.0"
+  }
+}

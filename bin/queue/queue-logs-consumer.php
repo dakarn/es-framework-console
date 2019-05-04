@@ -1,16 +1,13 @@
 <?php
 
-use Kafka\Kafka;
-use Kafka\ConfigureConnect;
-use Configs\Config;
 use Kafka\Topics;
-use Kafka\Groups;
+use QueueManager\QueueManager;
+use QueueManager\Strategy\KafkaReceiverStrategy;
+use App\HandlerQueue\LogsQueueHandler;
 
-include_once  '../../vendor/autoload.php';
+include_once  '../../bootstrap-console.php';
 
-$connectConfig = new ConfigureConnect([Config::get('kafka', 'host')], Topics::LOGS, Groups::MY_CONSUMER_GROUP);
-
-Kafka::create()
-	->setConfigureConnect($connectConfig)
-	->getConsumer()
-	->waitMessage();
+QueueManager::create()
+	->setReceiver(new KafkaReceiverStrategy())
+	->setQueueHandler(Topics::LOGS, new LogsQueueHandler())
+	->runHandler(Topics::LOGS);

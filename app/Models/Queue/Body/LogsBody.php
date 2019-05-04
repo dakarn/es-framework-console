@@ -8,9 +8,10 @@
 
 namespace App\Models\Queue\Body;
 
+use Kafka\Message\AbstractQueueBody;
 use ObjectMapper\ClassToMappingInterface;
 
-class Logs implements ClassToMappingInterface
+class LogsBody extends AbstractQueueBody implements ClassToMappingInterface
 {
 	private $level;
 	private $time;
@@ -21,7 +22,7 @@ class Logs implements ClassToMappingInterface
 	 */
 	public function getLevel()
 	{
-		return $this->level;
+		return ucfirst($this->level);
 	}
 
 	/**

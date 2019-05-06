@@ -15,8 +15,7 @@ use QueueManager\AbstractQueueHandler;
 use QueueManager\QueueManager;
 use QueueManager\QueueModel;
 use RdKafka\ConsumerTopic;
-use Kafka\RdKafkaMessageDecorator;
-use Kafka\Message\Payload;
+use Kafka\Message\RdKafkaMessageDecorator;
 use App\Models\Queue\Body\LogsBody;
 use ElasticSearch\ElasticQuery;
 use ElasticSearch\ElasticSearch;
@@ -28,69 +27,70 @@ class LogsQueueHandler extends AbstractQueueHandler
 	 */
 	private $consumerTopic;
 
-	public function prepare()
+	/**
+	 * @return mixed|void
+	 */
+	public function before()
 	{
 		$this->queueParam = new QueueModel();
 		$this->queueParam->setTopicName(Topics::LOGS);
 		$this->queueParam->setGroupId(Groups::MY_CONSUMER_GROUP);
-	}
 
-	/**
-	 * @return mixed|void
-	 * @throws \Exception\FileException
-	 */
-	public function before()
-	{
 		$this->strategy = QueueManager::create()->getReceiver();
 
 		$this->strategy
 			->setParams($this->queueParam)
 			->build();
 
-		$this->consumerTopic = $this->strategy->getCreationObject()['consumerTopic'];
+		$this->consumerTopic = $this->strategy->getCreatedObject()['consumerTopic'];
 	}
 
 	/**
+	 * @return RdKafkaMessageDecorator|mixed
+	 */
+	public function getMessage()
+	{
+		$message = $this->consumerTopic->consume(0, 120*10000);
+		return new RdKafkaMessageDecorator($message);
+	}
+
+	/**
+	 * @param RdKafkaMessageDecorator $messageDecorator
 	 * @return bool
 	 * @throws \Exception\FileException
 	 * @throws \Exception\HttpException
 	 * @throws \Exception\ObjectException
 	 */
-	public function run(): bool
+	public function executeTask($messageDecorator): bool
 	{
-		while (true) {
+		if ($messageDecorator->hasError()) {
 
-			$message = $this->consumerTopic->consume(0, 120*10000);
-			$messageDecorator = new RdKafkaMessageDecorator($message);
+			$logsBodyList = $messageDecorator
+				->setEntityList(LogsBodyList::class)
+				->getPayloadEntity()
+				->getObjectList();
 
-			if ($messageDecorator->hasError()) {
+			$data = [];
 
-				$data         = [];
-				$payloadModel = $messageDecorator
-						->setBodyEntity(LogsBodyList::class)
-						->getPayloadEntity();
-
-				/** @var LogsBody $logsBody */
-				foreach ($payloadModel->getBody()->getAll() as $logsBody) {
-					$data[] = [
-						'index' => [
-							'_index' => 'logs',
-							'_type' => 'errorLog']
-					];
-					$data[] = [
-						'level'   => $logsBody->getLevel(),
-						'time'    => $logsBody->getTime(),
-						'message' => $logsBody->getMessage(),
-					];
-
-				}
-
-				$es = ElasticSearch::create()
-					->bulk()
-					->setBulkArray($data);
-
-				ElasticQuery::create()->execute($es);
+			/** @var LogsBody $logsBody */
+			foreach ($logsBodyList->getAll() as $logsBody) {
+				$data[] = [
+					'index' => [
+						'_index' => 'logs',
+						'_type'  => 'errorLog']
+				];
+				$data[] = [
+					'level'   => $logsBody->getLevel(),
+					'time'    => $logsBody->getTime(),
+					'message' => $logsBody->getMessage(),
+				];
 			}
+
+			$es = ElasticSearch::create()
+				->bulk()
+				->setBulkArray($data);
+
+			ElasticQuery::create()->execute($es);
 		}
 
 		return true;

@@ -2,7 +2,7 @@
 
 use Kafka\Topics;
 use QueueManager\QueueManager;
-use QueueManager\Strategy\KafkaReceiverStrategy;
+use QueueManager\ReceiverStrategy\KafkaReceiverStrategy;
 use App\HandlerQueue\LogsQueueHandler;
 
 include_once  '../../bootstrap-console.php';

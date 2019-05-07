@@ -9,6 +9,7 @@
 namespace App\HandlerQueue;
 
 use App\Models\Queue\Body\LogsBodyList;
+use App\Models\Queue\AssignBodyToMessage;
 use Kafka\Groups;
 use Kafka\Topics;
 use QueueManager\AbstractQueueHandler;
@@ -51,7 +52,11 @@ class LogsQueueHandler extends AbstractQueueHandler
 	public function getMessage()
 	{
 		$message = $this->consumerTopic->consume(0, 120*10000);
-		return new RdKafkaMessageDecorator($message);
+
+		$messageDecorator = new RdKafkaMessageDecorator($message);
+		$messageDecorator->setBody(LogsBodyList::class);
+
+		return $messageDecorator;
 	}
 
 	/**
@@ -63,35 +68,35 @@ class LogsQueueHandler extends AbstractQueueHandler
 	 */
 	public function executeTask($messageDecorator): bool
 	{
-		if ($messageDecorator->hasError()) {
+		if (!$messageDecorator->hasError()) {
+		    return false;
+        }
 
-			$logsBodyList = $messageDecorator
-				->setEntityList(LogsBodyList::class)
-				->getPayloadEntity()
-				->getObjectList();
+        $logsBodyList = $messageDecorator
+            ->getPayloadEntity()
+            ->getObjectList();
 
-			$data = [];
+        $data = [];
 
-			/** @var LogsBody $logsBody */
-			foreach ($logsBodyList->getAll() as $logsBody) {
-				$data[] = [
-					'index' => [
-						'_index' => 'logs',
-						'_type'  => 'errorLog']
-				];
-				$data[] = [
-					'level'   => $logsBody->getLevel(),
-					'time'    => $logsBody->getTime(),
-					'message' => $logsBody->getMessage(),
-				];
-			}
+        /** @var LogsBody $logsBody */
+        foreach ($logsBodyList->getAll() as $logsBody) {
+            $data[] = [
+                'index' => [
+                    '_index' => 'logs',
+                    '_type'  => 'errorLog']
+            ];
+            $data[] = [
+                'level'   => $logsBody->getLevel(),
+                'time'    => $logsBody->getTime(),
+                'message' => $logsBody->getMessage(),
+            ];
+        }
 
-			$es = ElasticSearch::create()
-				->bulk()
-				->setBulkArray($data);
+        $es = ElasticSearch::create()
+            ->bulk()
+            ->setBulkArray($data);
 
-			ElasticQuery::create()->execute($es);
-		}
+        ElasticQuery::create()->execute($es);
 
 		return true;
 	}

@@ -2,9 +2,16 @@
 
 namespace App\HandlerQueue\Kafka;
 
-use App\Models\Queue\Body\InvalidMessage;
+use App\QueueApp\Models\Body\FileLoaderBody;
+use QueueManager\AbstractQueueHandler;
+use QueueManager\QueueModel;
+use Kafka\Topics;
+use QueueManager\QueueManager;
+use Kafka\Groups;
+use Kafka\Message\RdKafkaMessageDecorator;
+use RdKafka\ConsumerTopic;
 
-class InvalidMessageHandler  extends AbstractQueueHandler
+class FileLoaderQueueHandler extends AbstractQueueHandler
 {
     /**
      * @var ConsumerTopic
@@ -17,7 +24,7 @@ class InvalidMessageHandler  extends AbstractQueueHandler
     public function before()
     {
         $this->queueParam = new QueueModel();
-        $this->queueParam->setTopicName(Topics::INVALID_MESSAGE);
+        $this->queueParam->setTopicName(Topics::FILE_LOADER);
         $this->queueParam->setGroupId(Groups::MY_CONSUMER_GROUP);
 
         $this->strategy = QueueManager::create()->getReceiver();
@@ -37,25 +44,23 @@ class InvalidMessageHandler  extends AbstractQueueHandler
         $message = $this->consumerTopic->consume(0, 120*10000);
 
         $messageDecorator = new RdKafkaMessageDecorator($message);
-        $messageDecorator->setBody(InvalidMessage::class);
+        $messageDecorator->setBody(FileLoaderBody::class);
 
         return $messageDecorator;
     }
 
-    /**
-     * @param RdKafkaMessageDecorator $messageDecorator
-     * @return bool
-     * @throws \Exception\FileException
-     * @throws \Exception\HttpException
-     * @throws \Exception\ObjectException
-     */
+	/**
+	 * @param RdKafkaMessageDecorator $messageDecorator
+	 * @return bool
+	 * @throws \Exception
+	 */
     public function executeTask($messageDecorator): bool
     {
         if (!$messageDecorator->hasError()) {
             return false;
         }
 
-        $invalidMessage = $messageDecorator
+        $fileLoaderBody = $messageDecorator
             ->getPayloadEntity()
             ->getBody();
 

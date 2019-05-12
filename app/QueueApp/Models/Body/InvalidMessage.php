@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models\Queue\Body;
+namespace App\QueueApp\Models\Body;
 
 class InvalidMessage
 {

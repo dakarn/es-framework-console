@@ -6,7 +6,7 @@
  * Time: 2:01
  */
 
-namespace App\Models\Queue\Body;
+namespace App\QueueApp\Models\Body;
 
 use Helper\AbstractList;
 

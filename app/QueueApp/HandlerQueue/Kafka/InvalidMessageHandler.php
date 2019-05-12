@@ -1,10 +1,17 @@
 <?php
 
-namespace App\HandlerQueue;
+namespace App\HandlerQueue\Kafka;
 
-use App\Models\Queue\Body\FileLoaderBody;
+use App\QueueApp\Models\Body\InvalidMessage;
+use QueueManager\AbstractQueueHandler;
+use QueueManager\QueueModel;
+use Kafka\Topics;
+use QueueManager\QueueManager;
+use Kafka\Groups;
+use Kafka\Message\RdKafkaMessageDecorator;
+use RdKafka\ConsumerTopic;
 
-class FileLoaderQueueHandler extends AbstractQueueHandler
+class InvalidMessageHandler  extends AbstractQueueHandler
 {
     /**
      * @var ConsumerTopic
@@ -17,7 +24,7 @@ class FileLoaderQueueHandler extends AbstractQueueHandler
     public function before()
     {
         $this->queueParam = new QueueModel();
-        $this->queueParam->setTopicName(Topics::FILE_LOADER);
+        $this->queueParam->setTopicName(Topics::INVALID_MESSAGE);
         $this->queueParam->setGroupId(Groups::MY_CONSUMER_GROUP);
 
         $this->strategy = QueueManager::create()->getReceiver();
@@ -37,7 +44,7 @@ class FileLoaderQueueHandler extends AbstractQueueHandler
         $message = $this->consumerTopic->consume(0, 120*10000);
 
         $messageDecorator = new RdKafkaMessageDecorator($message);
-        $messageDecorator->setBody(FileLoaderBody::class);
+        $messageDecorator->setBody(InvalidMessage::class);
 
         return $messageDecorator;
     }
@@ -55,7 +62,7 @@ class FileLoaderQueueHandler extends AbstractQueueHandler
             return false;
         }
 
-        $fileLoaderBody = $messageDecorator
+        $invalidMessage = $messageDecorator
             ->getPayloadEntity()
             ->getBody();
 

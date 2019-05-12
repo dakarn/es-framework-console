@@ -6,10 +6,10 @@
  * Time: 23:15
  */
 
-namespace App\HandlerQueue;
+namespace App\HandlerQueue\Kafka;
 
-use App\Models\Queue\Body\LogsBodyList;
-use App\Models\Queue\AssignBodyToMessage;
+use App\QueueApp\Kafka\LogsMessageDecorator;
+use App\QueueApp\Models\Body\LogsBodyList;
 use Kafka\Groups;
 use Kafka\Topics;
 use QueueManager\AbstractQueueHandler;
@@ -17,7 +17,7 @@ use QueueManager\QueueManager;
 use QueueManager\QueueModel;
 use RdKafka\ConsumerTopic;
 use Kafka\Message\RdKafkaMessageDecorator;
-use App\Models\Queue\Body\LogsBody;
+use App\QueueApp\Models\Body\LogsBody;
 use ElasticSearch\ElasticQuery;
 use ElasticSearch\ElasticSearch;
 
@@ -47,14 +47,14 @@ class LogsQueueHandler extends AbstractQueueHandler
 	}
 
 	/**
-	 * @return RdKafkaMessageDecorator|mixed
+	 * @return LogsMessageDecorator|mixed
 	 */
 	public function getMessage()
 	{
 		$message = $this->consumerTopic->consume(0, 120*10000);
 
-		$messageDecorator = new RdKafkaMessageDecorator($message);
-		$messageDecorator->setBody(LogsBodyList::class);
+		$messageDecorator = new LogsMessageDecorator($message);
+		$messageDecorator->setBodyAsList(LogsBodyList::class);
 
 		return $messageDecorator;
 	}
@@ -68,15 +68,12 @@ class LogsQueueHandler extends AbstractQueueHandler
 	 */
 	public function executeTask($messageDecorator): bool
 	{
-		if (!$messageDecorator->hasError()) {
+		if (empty($messageDecorator->getPayloadSource())) {
 		    return false;
         }
 
-        $logsBodyList = $messageDecorator
-            ->getPayloadEntity()
-            ->getObjectList();
-
-        $data = [];
+		$logsBodyList = $messageDecorator->getPayloadEntity()->getBodyAsList();
+		$data         = [];
 
         /** @var LogsBody $logsBody */
         foreach ($logsBodyList->getAll() as $logsBody) {

@@ -6,7 +6,7 @@
  * Time: 0:09
  */
 
-namespace App\Models\Queue\Body;
+namespace App\QueueApp\Models\Body;
 
 use Kafka\Message\AbstractQueueBody;
 use ObjectMapper\ClassToMappingInterface;
@@ -16,6 +16,15 @@ class LogsBody extends AbstractQueueBody implements ClassToMappingInterface
 	private $level;
 	private $time;
 	private $message;
+
+	public function getProperties(): array
+	{
+		return [
+			'level',
+			'time',
+			'message',
+		];
+	}
 
 	/**
 	 * @return mixed

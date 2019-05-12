@@ -1,14 +1,25 @@
 <?php
 
-namespace App\Models\Queue\Body;
+namespace App\QueueApp\Models\Body;
 
-class FileLoaderBody
+use ObjectMapper\ClassToMappingInterface;
+
+class FileLoaderBody implements ClassToMappingInterface
 {
     private $fromURL;
     private $saveTo;
     private $name;
 
-    /**
+    public function getProperties(): array
+    {
+    	return [
+		    'fromURL',
+		    'saveTo',
+		    'name',
+	    ];
+    }
+
+	/**
      * @return mixed
      */
     public function getFromURL()

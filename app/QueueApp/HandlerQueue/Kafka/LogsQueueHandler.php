@@ -8,8 +8,9 @@
 
 namespace App\HandlerQueue\Kafka;
 
-use App\QueueApp\Kafka\LogsMessageDecorator;
+use App\QueueApp\Kafka\MessageDecorators\LogsMessageDecorator;
 use App\QueueApp\Models\Body\LogsBodyList;
+use ElasticSearchCommands\ElasticSearchLogger;
 use Kafka\Groups;
 use Kafka\Topics;
 use QueueManager\AbstractQueueHandler;
@@ -72,28 +73,8 @@ class LogsQueueHandler extends AbstractQueueHandler
 		    return false;
         }
 
-		$logsBodyList = $messageDecorator->getPayloadEntity()->getBodyAsList();
-		$data         = [];
-
-        /** @var LogsBody $logsBody */
-        foreach ($logsBodyList->getAll() as $logsBody) {
-            $data[] = [
-                'index' => [
-                    '_index' => 'logs',
-                    '_type'  => 'errorLog']
-            ];
-            $data[] = [
-                'level'   => $logsBody->getLevel(),
-                'time'    => $logsBody->getTime(),
-                'message' => $logsBody->getMessage(),
-            ];
-        }
-
-        $es = ElasticSearch::create()
-            ->bulk()
-            ->setBulkArray($data);
-
-        ElasticQuery::create()->execute($es);
+		$loggerES = new ElasticSearchLogger();
+		$loggerES->saveLogs($messageDecorator->getPayloadEntity());
 
 		return true;
 	}

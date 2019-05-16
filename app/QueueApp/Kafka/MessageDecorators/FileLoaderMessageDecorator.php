@@ -6,7 +6,7 @@
  * Time: 20:04
  */
 
-namespace App\QueueApp\Kafka;
+namespace App\QueueApp\Kafka\MessageDecorators;
 
 use Kafka\Message\RdKafkaMessageDecorator;
 

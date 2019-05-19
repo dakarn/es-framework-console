@@ -18,9 +18,6 @@ use QueueManager\QueueManager;
 use QueueManager\QueueModel;
 use RdKafka\ConsumerTopic;
 use Kafka\Message\RdKafkaMessageDecorator;
-use App\QueueApp\Models\Body\LogsBody;
-use ElasticSearch\ElasticQuery;
-use ElasticSearch\ElasticSearch;
 
 class LogsQueueHandler extends AbstractQueueHandler
 {

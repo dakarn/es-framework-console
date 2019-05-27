@@ -1,14 +1,14 @@
 <?php
 
-namespace App\HandlerQueue\Kafka;
+namespace ES\App\HandlerQueue\Kafka;
 
 use App\QueueApp\Models\Body\FileLoaderBody;
-use QueueManager\AbstractQueueHandler;
-use QueueManager\QueueModel;
-use Kafka\Topics;
-use QueueManager\QueueManager;
-use Kafka\Groups;
-use Kafka\Message\RdKafkaMessageDecorator;
+use ES\Kernel\QueueManager\AbstractQueueHandler;
+use ES\Kernel\QueueManager\QueueModel;
+use ES\Kernel\Kafka\Topics;
+use ES\Kernel\QueueManager\QueueManager;
+use ES\Kernel\Kafka\Groups;
+use ES\Kernel\Kafka\Message\RdKafkaMessageDecorator;
 use RdKafka\ConsumerTopic;
 
 class FileLoaderQueueHandler extends AbstractQueueHandler

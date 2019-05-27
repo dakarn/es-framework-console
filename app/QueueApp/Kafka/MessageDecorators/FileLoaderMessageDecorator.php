@@ -6,9 +6,9 @@
  * Time: 20:04
  */
 
-namespace App\QueueApp\Kafka\MessageDecorators;
+namespace ES\App\QueueApp\Kafka\MessageDecorators;
 
-use Kafka\Message\RdKafkaMessageDecorator;
+use ES\Kernel\Kafka\Message\RdKafkaMessageDecorator;
 
 class FileLoaderMessageDecorator extends RdKafkaMessageDecorator
 {

@@ -2,7 +2,7 @@
 
 namespace App\QueueApp\Models\Body;
 
-use ObjectMapper\ClassToMappingInterface;
+use ES\Kernel\ObjectMapper\ClassToMappingInterface;
 
 class FileLoaderBody implements ClassToMappingInterface
 {

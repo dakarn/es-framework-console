@@ -2,12 +2,16 @@
   "repositories": [
     {
       "type": "path",
+      "url":  "C:\\apache\\translate-site\\translate-module"
+    },
+    {
+      "type": "path",
       "url":  "C:\\apache\\es-framework-dev\\es-framework-kernel"
     }
   ],
   "autoload": {
     "psr-4": {
-      "App\\": "app"
+      "ES\\App\\": "app"
     }
   },
   "autoload-dev": {
@@ -17,6 +21,7 @@
   },
   "require": {
     "php": "7.1.2RC1",
+    "translate-module": "1.0",
     "es-framework-kernel": "1.0"
   }
 }

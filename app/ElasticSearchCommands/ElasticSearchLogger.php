@@ -2,18 +2,21 @@
 
 namespace ElasticSearchCommands;
 
-use App\QueueApp\Models\Body\LogsBody;
-use ElasticSearch\ElasticQuery;
-use ElasticSearch\ElasticSearch;
-use Kafka\Message\Payload;
+use ES\App\QueueApp\Models\Body\LogsBody;
+use ES\Kernel\ElasticSearch\ElasticQuery;
+use ES\Kernel\ElasticSearch\ElasticSearch;
+use ES\Kernel\Kafka\Message\Payload;
+use ES\Kernel\Exception\FileException;
+use ES\Kernel\Exception\HttpException;
+use ES\Kernel\Exception\ObjectException;
 
 class ElasticSearchLogger
 {
     /**
      * @param Payload $payload
-     * @throws \Exception\FileException
-     * @throws \Exception\HttpException
-     * @throws \Exception\ObjectException
+     * @throws FileException
+     * @throws HttpException
+     * @throws ObjectException
      */
     public function saveLogs(Payload $payload)
     {

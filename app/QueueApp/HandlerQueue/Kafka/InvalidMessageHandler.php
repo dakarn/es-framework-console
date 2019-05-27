@@ -1,14 +1,15 @@
 <?php
 
-namespace App\HandlerQueue\Kafka;
+namespace ES\App\HandlerQueue\Kafka;
 
 use App\QueueApp\Models\Body\InvalidMessage;
-use QueueManager\AbstractQueueHandler;
-use QueueManager\QueueModel;
-use Kafka\Topics;
-use QueueManager\QueueManager;
-use Kafka\Groups;
-use Kafka\Message\RdKafkaMessageDecorator;
+use ES\Kernel\Kafka\Message\RdKafkaMessageDecoratorInterface;
+use ES\Kernel\QueueManager\AbstractQueueHandler;
+use ES\Kernel\QueueManager\QueueModel;
+use ES\Kernel\Kafka\Topics;
+use ES\Kernel\QueueManager\QueueManager;
+use ES\Kernel\Kafka\Groups;
+use ES\Kernel\Kafka\Message\RdKafkaMessageDecorator;
 use RdKafka\ConsumerTopic;
 
 class InvalidMessageHandler  extends AbstractQueueHandler
@@ -49,13 +50,10 @@ class InvalidMessageHandler  extends AbstractQueueHandler
         return $messageDecorator;
     }
 
-    /**
-     * @param RdKafkaMessageDecorator $messageDecorator
-     * @return bool
-     * @throws \Exception\FileException
-     * @throws \Exception\HttpException
-     * @throws \Exception\ObjectException
-     */
+	/**
+	 * @param $messageDecorator RdKafkaMessageDecoratorInterface
+	 * @return bool
+	 */
     public function executeTask($messageDecorator): bool
     {
         if (!$messageDecorator->hasError()) {

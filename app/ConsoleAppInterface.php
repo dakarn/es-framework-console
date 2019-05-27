@@ -6,7 +6,7 @@
  * Time: 13:35
  */
 
-namespace App;
+namespace ES\App;
 
 interface ConsoleAppInterface
 {

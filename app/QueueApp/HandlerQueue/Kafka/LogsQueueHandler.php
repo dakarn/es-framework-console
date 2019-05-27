@@ -8,16 +8,18 @@
 
 namespace App\HandlerQueue\Kafka;
 
-use App\QueueApp\Kafka\MessageDecorators\LogsMessageDecorator;
-use App\QueueApp\Models\Body\LogsBodyList;
+use ES\App\QueueApp\Kafka\MessageDecorators\LogsMessageDecorator;
+use ES\App\QueueApp\Models\Body\LogsBodyList;
 use ElasticSearchCommands\ElasticSearchLogger;
-use Kafka\Groups;
-use Kafka\Topics;
-use QueueManager\AbstractQueueHandler;
-use QueueManager\QueueManager;
-use QueueManager\QueueModel;
+use ES\Kernel\Exception\FileException;
+use ES\Kernel\Exception\ObjectException;
+use ES\Kernel\Kafka\Groups;
+use ES\Kernel\Kafka\Topics;
+use ES\Kernel\QueueManager\AbstractQueueHandler;
+use ES\Kernel\QueueManager\QueueManager;
+use ES\Kernel\QueueManager\QueueModel;
 use RdKafka\ConsumerTopic;
-use Kafka\Message\RdKafkaMessageDecorator;
+use ES\Kernel\Kafka\Message\RdKafkaMessageDecorator;
 
 class LogsQueueHandler extends AbstractQueueHandler
 {
@@ -60,9 +62,10 @@ class LogsQueueHandler extends AbstractQueueHandler
 	/**
 	 * @param RdKafkaMessageDecorator $messageDecorator
 	 * @return bool
-	 * @throws \Exception\FileException
-	 * @throws \Exception\HttpException
-	 * @throws \Exception\ObjectException
+	 * @throws FileException
+	 * @throws \HttpException
+	 * @throws ObjectException
+	 * @throws \ES\Kernel\Exception\HttpException
 	 */
 	public function executeTask($messageDecorator): bool
 	{

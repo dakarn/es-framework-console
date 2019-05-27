@@ -6,10 +6,10 @@
  * Time: 0:09
  */
 
-namespace App\QueueApp\Models\Body;
+namespace ES\App\QueueApp\Models\Body;
 
-use Kafka\Message\AbstractQueueBody;
-use ObjectMapper\ClassToMappingInterface;
+use ES\Kernel\Kafka\Message\AbstractQueueBody;
+use ES\Kernel\ObjectMapper\ClassToMappingInterface;
 
 class LogsBody extends AbstractQueueBody implements ClassToMappingInterface
 {

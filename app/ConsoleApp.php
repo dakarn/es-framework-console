@@ -6,28 +6,22 @@
  * Time: 14:53
  */
 
-namespace App;
+namespace ES\App;
 
-use System\Logger\Logger;
-use System\Logger\LoggerAware;
-use System\Kernel\TypesApp\AbstractApplication;
+use ES\Kernel\Exception\FileException;
+use ES\Kernel\System\Logger\Logger;
+use ES\Kernel\System\Logger\LoggerAware;
+use ES\Kernel\System\Kernel\TypesApp\AbstractApplication;
 
 final class ConsoleApp extends AbstractApplication implements ConsoleAppInterface
 {
 	/**
-	 * @throws \Exception\FileException
+	 * @throws FileException
 	 * @throws \Throwable
 	 */
 	public function run()
 	{
 	    $this->runInternal();
-	}
-
-	/**
-	 * @return void
-	 */
-	public function outputResponse(): void
-	{
 	}
 
 	/**

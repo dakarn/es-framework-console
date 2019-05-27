@@ -6,9 +6,9 @@
  * Time: 2:01
  */
 
-namespace App\QueueApp\Models\Body;
+namespace ES\App\QueueApp\Models\Body;
 
-use Helper\AbstractList;
+use ES\Kernel\Helper\AbstractList;
 
 class LogsBodyList extends AbstractList
 {

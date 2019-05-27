@@ -1,9 +1,9 @@
 <?php
 
-use Kafka\Topics;
-use QueueManager\QueueManager;
-use QueueManager\ReceiverStrategy\KafkaReceiverStrategy;
-use App\HandlerQueue\FileLoaderQueueHandler;
+use ES\Kernel\Kafka\Topics;
+use ES\Kernel\QueueManager\QueueManager;
+use ES\Kernel\QueueManager\ReceiverStrategy\KafkaReceiverStrategy;
+use ES\App\HandlerQueue\Kafka\FileLoaderQueueHandler;
 
 include_once  '../../../bootstrap-console.php';
 

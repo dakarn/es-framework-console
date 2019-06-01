@@ -2,22 +2,15 @@
 
 include_once  '../../bootstrap-console.php';
 
-use ES\Kernel\System\Database\DB;
+use ES\TranslateModule\Repositories\TranslateRepository;
+use ES\Kernel\Helper\RepositoryHelper\StorageRepository;
 use ES\TranslateModule\Models\{Word, WordList};
-use ES\Kernel\System\Database\Schema\MySQL\TeacherDatabase;
 
 class LoaderTranslateFile
 {
 	private const SAVE_PATH  = 'C:/apache/htdocs/myblog-yii2/backend/web/mp3/%s.mp3';
 	private const URL        = 'https://www.translate.ru/services/soap.asmx/CallForvo';
 	private const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36';
-
-	/**
-	 * LoaderTranslateFile constructor.
-	 */
-	public function __construct()
-	{
-	}
 
 	/**
 	 * @throws Exception
@@ -33,17 +26,10 @@ class LoaderTranslateFile
 	 */
 	private function getWordList(): WordList
 	{
-		return DB::MySQLAdapter(TeacherDatabase::TEACHER)->fetchToObjectList('
-			SELECT 
-				`id`, 
-				`text`, 
-				`translate`, 
-				`sort`
-			FROM 
-				`english_teacher` 
-			ORDER BY 
-				`id`
-		', WordList::class, Word::class);
+		/** @var TranslateRepository $repository */
+		$repository = StorageRepository::getRepository(TranslateRepository::class);
+
+		return $repository->getWordList('sort');
 	}
 
 	/**
@@ -98,9 +84,7 @@ class LoaderTranslateFile
 		\curl_close($ch);
 
 		return $response;
-
 	}
-
 }
 
 (new LoaderTranslateFile())->run();

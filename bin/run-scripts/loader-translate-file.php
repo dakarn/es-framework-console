@@ -15,7 +15,7 @@ class LoaderTranslateFile
 	/**
 	 * @throws Exception
 	 */
-	public function run()
+	public function execute()
 	{
 		$this->loadTranslateFile($this->getWordList());
 	}
@@ -87,4 +87,4 @@ class LoaderTranslateFile
 	}
 }
 
-(new LoaderTranslateFile())->run();
+(new LoaderTranslateFile())->execute();

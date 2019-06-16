@@ -8,16 +8,13 @@
 
 namespace ES\App;
 
-use ES\Kernel\Exception\FileException;
-use ES\Kernel\System\Logger\Logger;
-use ES\Kernel\System\Logger\LoggerAware;
-use ES\Kernel\System\Kernel\TypesApp\AbstractApplication;
+use ES\Kernel\Logger\Logger;
+use ES\Kernel\Logger\LoggerAware;
+use ES\Kernel\Kernel\TypesApp\AbstractApplication;
 
 final class ConsoleApp extends AbstractApplication implements ConsoleAppInterface
 {
 	/**
-	 * @throws FileException
-	 * @throws \Throwable
 	 */
 	public function run()
 	{
